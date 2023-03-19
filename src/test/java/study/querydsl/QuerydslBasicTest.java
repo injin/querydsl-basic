@@ -4,6 +4,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 import study.querydsl.dto.MemberDto;
 import study.querydsl.dto.QMemberDto;
@@ -434,6 +436,9 @@ public class QuerydslBasicTest {
         }
     }
 
+    /**
+     * 칼럼명과 DTO속성이 다를 때 : 별칭 사용
+     */
     @Test
     public void findUserDto() {
         List<UserDto> result = queryFactory
@@ -461,6 +466,9 @@ public class QuerydslBasicTest {
         }
     }
 
+    /**
+     * 동적 쿼리 - BooleanBuilder
+     */
     @Test
     public void dynamicQuery_BooleanBuilder() {
         String nameParam = "member1";
@@ -485,7 +493,48 @@ public class QuerydslBasicTest {
                 .fetch();
     }
 
-    
+    /**
+     * 동적쿼리 - where 다중 파라미터 사용
+     */
+    @Test
+    public void dynamicQuery_WhereParam() throws Exception {
+        String usernameParam = "member1";
+        Integer ageParam = 10;
+        List<Member> result = searchMember2(usernameParam, ageParam);
+        Assertions.assertThat(result.size()).isEqualTo(1);
+    }
+    private List<Member> searchMember2(String usernameCond, Integer ageCond) {
+        return queryFactory
+                .selectFrom(member)
+                .where(usernameEq(usernameCond), ageEq(ageCond))
+                .fetch();
+    }
+    private BooleanExpression usernameEq(String usernameCond) {
+        return usernameCond != null ? member.username.eq(usernameCond) : null;
+    }
+    private BooleanExpression ageEq(Integer ageCond) {
+        return ageCond != null ? member.age.eq(ageCond) : null;
+    }
+
+    /**
+     * 벌크 업데이트
+     */
+    @Test
+    @Commit
+    public void bulkUpdate() {
+
+        long count = queryFactory
+                .update(member)
+                .set(member.username, "비회원")
+                .where(member.age.lt(28))
+                .execute();
+
+        // 영속성 컨텍스트는 벌크 업데이트 후 동기화 되지 않으므로 초기화
+        em.flush();
+        em.clear();
+    }
+
+
 
 
 }
