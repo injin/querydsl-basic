@@ -1,4 +1,4 @@
-package study.querydsl.controller;
+package study.querydsl;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;

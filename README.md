@@ -8,6 +8,10 @@
 - MemberJpaRepository.java
 - MemberJpaRepositoryTest.java
 - MemberController.java
-- 
+
+### 실무활용 - 스프링 데이터 JPA와 Querydsl
+- MemberRepository.java
+- MemberRepositoryCustom.java
+- MemberRepositoryImpl.java
 
 
