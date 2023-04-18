@@ -64,6 +64,9 @@ public class MemberJpaRepository {
                 .fetch();
     }
 
+    /**
+     * 동적쿼리1 : BooleanBuilder사용
+     */
     public List<MemberTeamDto> searchByBuilder(MemberSearchCondition condition) {
 
         BooleanBuilder builder = new BooleanBuilder();
@@ -94,6 +97,9 @@ public class MemberJpaRepository {
                 .fetch();
     }
 
+    /**
+     * 동적쿼리2 : Where 다중 파라미터 사용
+     */
     public List<MemberTeamDto> search(MemberSearchCondition condition) {
         return queryFactory
                 .select(new QMemberTeamDto(
