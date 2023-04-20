@@ -19,15 +19,26 @@ public class MemberController {
     private final MemberJpaRepository memberJpaRepository;
     private final MemberRepository memberRepository;
 
+    /**
+     * 동적쿼리
+     */
     @GetMapping("/v1/members")
     public List<MemberTeamDto> searchMemberV1(MemberSearchCondition condition) {
         return memberJpaRepository.search(condition);
     }
 
+    /**
+     * 페이징 처리
+     * 쿼리 스트링 예시 : ?page=1&size=5
+     */
     @GetMapping("/v2/members")
     public Page<MemberTeamDto> searchMemberV2(MemberSearchCondition condition, Pageable pageable) {
         return memberRepository.searchPageSimple(condition, pageable);
     }
+
+    /**
+     * 페이징 처리 최적화
+     */
     @GetMapping("/v3/members")
     public Page<MemberTeamDto> searchMemberV3(MemberSearchCondition condition, Pageable pageable) {
         return memberRepository.searchPageComplex(condition, pageable);
